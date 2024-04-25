@@ -15,6 +15,23 @@ def convert_to_grayscale(image_path):
     cv2.destroyAllWindows()
 
 
+def expand_detected_regions(regions,original_image, expand_factor=1.15):
+    expanded_regions = []
+    for region in regions:
+        x, y, w, h = cv2.boundingRect(region)
+        # Calcular las nuevas coordenadas y dimensiones del cuadro expandido
+        new_x = max(0, int(x - (expand_factor - 1) / 2 * w))
+        new_y = max(0, int(y - (expand_factor - 1) / 2 * h))
+        new_w = min(original_image.shape[1], int(w * expand_factor))
+        new_h = min(original_image.shape[0], int(h * expand_factor))
+        expanded_regions.append((new_x, new_y, new_w, new_h))
+    return expanded_regions
+
+
+
+
+
+
 def enhance_contrast(image_path):
     # Cargar la imagen en color
     original_image = cv2.imread(image_path)
@@ -67,10 +84,9 @@ def apply_mser(image_path):
     # Detectar regiones de alto contraste
     regions, _ = mser.detectRegions(gray_image)
 
+    expanded_regions = expand_detected_regions(regions,gray_image)
     # Dibujar los contornos de las regiones detectadas sobre la imagen original
-    for region in regions:
-        x, y, w, h = cv2.boundingRect(region)
-
+    for x, y, w, h in expanded_regions:
         # Calcular la relación de aspecto
         aspect_ratio = w / float(h)
 
@@ -78,10 +94,12 @@ def apply_mser(image_path):
         if 0.9 <= aspect_ratio <= 1.1:  # Aceptar regiones cuya relación de aspecto es cercana a 1.0
             cv2.rectangle(original_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
+
     # Mostrar la imagen con las regiones detectadas
     cv2.imshow('MSER', original_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
 
 
 # El siguiente bloque se usa solo para pruebas directas de este módulo.
