@@ -150,11 +150,35 @@ def detectar_colores(imagen):
     mascara_roja2 = cv2.inRange(imagen_hsv, rango_rojo_bajo2, rango_rojo_alto2)
     mascara_roja = cv2.bitwise_or(mascara_roja1, mascara_roja2)
     pixeles_rojos = cv2.bitwise_and(imagen, imagen, mask=mascara_roja)
-    cv2.imshow("original", imagen)
-    cv2.imshow('Píxeles Azules', pixeles_azules)
-    cv2.imshow('Píxeles Rojos', pixeles_rojos)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+
+    # Convertir la imagen a escala de grises
+    pixeles_rojos_gris = cv2.cvtColor(pixeles_rojos, cv2.COLOR_BGR2GRAY)
+
+    # Contar píxeles no cero (blancos) en la imagen
+    cantidad_pixeles_rojos = cv2.countNonZero(pixeles_rojos_gris)
+
+    # Decidir si la imagen tiene "mucho" color rojo
+    umbral= 6000  # Ajusta este umbral según tus necesidades
+    if cantidad_pixeles_rojos > umbral:
+        print(cantidad_pixeles_rojos)
+        cv2.imshow("original", imagen)
+        cv2.imshow('Píxeles Rojos', pixeles_rojos)
+
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+    pixeles_azules_gris = cv2.cvtColor(pixeles_azules, cv2.COLOR_BGR2GRAY)
+
+    # Contar píxeles no cero (blancos) en la imagen
+    cantidad_pixeles_azules = cv2.countNonZero(pixeles_azules_gris)
+    umbral = 15000
+    if cantidad_pixeles_azules > umbral:
+        print(cantidad_pixeles_azules)
+        cv2.imshow("original", imagen)
+        cv2.imshow('Píxeles Azules', pixeles_azules)
+
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
     return pixeles_azules, pixeles_rojos
 # El siguiente bloque se usa solo para pruebas directas de este módulo.
