@@ -82,7 +82,6 @@ def resize_regions(regions, image, target_size=(250, 250)):
     return resized_regions
 
 
-
 def apply_mser(image_path):
     # Cargar la imagen en color
     original_image = cv2.imread(image_path)
@@ -120,9 +119,15 @@ def apply_mser(image_path):
     for region in resized_regions:
         regiones.append(detectar_colores(region))
 
-    print(encontrar_regiones_similares(regiones, 10000))
 
-    cv2.destroyAllWindows()
+    grupos_similares=encontrar_regiones_similares(regiones, 10000)
+
+    for grupo in grupos_similares:
+        for region in grupo:
+            for reg in region:
+                cv2.imshow('Imagen en escala de grises', reg)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
 
 
 
@@ -210,6 +215,7 @@ def encontrar_regiones_similares(regiones, umbral_similitud):
             grupos_similares.append(grupo_actual)
 
     return grupos_similares
+
 
 
 if __name__ == "__main__":
