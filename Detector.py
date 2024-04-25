@@ -111,19 +111,17 @@ def apply_mser(image_path):
 
         cv2.rectangle(original_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-
-
     resized_regions = resize_regions(expanded_regions, original_image)
-
-
-
 
     # Mostrar la imagen con las regiones detectadas
     cv2.imshow('MSER', original_image)
     cv2.waitKey(0)
-
+    regiones=[]
     for region in resized_regions:
-        detectar_colores(region)
+        regiones.append(detectar_colores(region))
+
+    print(encontrar_regiones_similares(regiones, 10000))
+
     cv2.destroyAllWindows()
 
 
@@ -159,6 +157,9 @@ def detectar_colores(imagen):
 
     # Decidir si la imagen tiene "mucho" color rojo
     umbral= 6000  # Ajusta este umbral según tus necesidades
+
+
+    regiones=[]
     if cantidad_pixeles_rojos > umbral:
         print(cantidad_pixeles_rojos)
         cv2.imshow("original", imagen)
@@ -166,6 +167,7 @@ def detectar_colores(imagen):
 
         cv2.waitKey(0)
         cv2.destroyAllWindows()
+        regiones.append(pixeles_rojos)
 
     pixeles_azules_gris = cv2.cvtColor(pixeles_azules, cv2.COLOR_BGR2GRAY)
 
@@ -179,9 +181,37 @@ def detectar_colores(imagen):
 
         cv2.waitKey(0)
         cv2.destroyAllWindows()
+        regiones.append(pixeles_azules)
 
-    return pixeles_azules, pixeles_rojos
+    return regiones
 # El siguiente bloque se usa solo para pruebas directas de este módulo.
+
+
+def calcular_similitud(region1, region2):
+    # Aquí puedes calcular la similitud entre dos regiones, por ejemplo, utilizando la distancia euclidiana
+    centroide1 = np.mean(region1, axis=0)
+    centroide2 = np.mean(region2, axis=0)
+    distancia = np.linalg.norm(centroide1 - centroide2)
+    return distancia
+
+
+def encontrar_regiones_similares(regiones, umbral_similitud):
+    grupos_similares = []
+
+    for idx, region in enumerate(regiones):
+        # Comparar la región actual con las restantes
+        grupo_actual = [region]
+        for j in range(idx + 1, len(regiones)):
+            similitud = calcular_similitud(region, regiones[j])
+            if similitud < umbral_similitud:
+                grupo_actual.append(regiones[j])
+
+        if len(grupo_actual) > 1:
+            grupos_similares.append(grupo_actual)
+
+    return grupos_similares
+
+
 if __name__ == "__main__":
     import sys
 
