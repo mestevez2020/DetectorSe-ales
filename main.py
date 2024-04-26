@@ -1,4 +1,6 @@
 import argparse
+import os
+
 import cv2
 
 if __name__ == "__main__":
@@ -20,8 +22,13 @@ if __name__ == "__main__":
     # Cargar los datos de entrenamiento sin se necesita
     print("Cargando datos de entrenamiento desde " + args.train_path)
 
+    image_paths = []
 
-
+    # Obtener la lista de archivos en la carpeta train_path
+    for filename in os.listdir(train_path):
+        if filename.endswith(".ppm"):  # Filtrar solo archivos de imagen
+            image_paths.append(os.path.join(train_path, filename))
+    print(len(image_paths))
     # Create the detector
     print("Creando el detector " + args.detector)
     

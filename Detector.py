@@ -106,9 +106,9 @@ def apply_mser(image_path):
 
 
     #dibujar los cuadrados en la imagen
-    for x, y, w, h in expanded_regions:
+    #for x, y, w, h in expanded_regions:
 
-        cv2.rectangle(original_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        #cv2.rectangle(original_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
     resized_regions = resize_regions(expanded_regions, original_image)
 
@@ -121,13 +121,16 @@ def apply_mser(image_path):
 
 
     grupos_similares=encontrar_regiones_similares(regiones, 10000)
-
+    i=0
     for grupo in grupos_similares:
+        print(i)
+        i += 1
         for region in grupo:
+
             for reg in region:
                 cv2.imshow('Imagen en escala de grises', reg)
                 cv2.waitKey(0)
-                cv2.destroyAllWindows()
+        cv2.destroyAllWindows()
 
 
 
@@ -202,18 +205,21 @@ def calcular_similitud(region1, region2):
 
 def encontrar_regiones_similares(regiones, umbral_similitud):
     grupos_similares = []
-
+    bolsa =[]
     for idx, region in enumerate(regiones):
         # Comparar la región actual con las restantes
         grupo_actual = [region]
-        for j in range(idx + 1, len(regiones)):
-            similitud = calcular_similitud(region, regiones[j])
-            if similitud < umbral_similitud:
-                grupo_actual.append(regiones[j])
+        if idx not in bolsa:
+            for j in range(idx + 1, len(regiones)):
+                similitud = calcular_similitud(region, regiones[j])
+                if similitud < umbral_similitud:
+                    grupo_actual.append(regiones[j])
+                    bolsa.append(j)
 
-        if len(grupo_actual) > 1:
-            grupos_similares.append(grupo_actual)
-
+            if len(grupo_actual) > 1:
+                grupos_similares.append(grupo_actual)
+        else:
+            print("estaba en la bolsa")
     return grupos_similares
 
 
