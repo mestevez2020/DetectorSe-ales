@@ -119,8 +119,12 @@ def apply_mser(image_path):
     for region in resized_regions:
         regiones.append(detectar_colores(region))
 
+    encontrar_grupos_similares(regiones)
 
-    grupos_similares=encontrar_regiones_similares(regiones, 10000)
+
+def encontrar_grupos_similares(regiones):
+
+    grupos_similares=encontrar_regiones_similares(regiones, 30000)
     i=0
     for grupo in grupos_similares:
         print(i)
@@ -146,6 +150,7 @@ def detectar_colores(imagen):
     rango_rojo_alto1 = np.array([10, 255, 255])
     rango_rojo_bajo2 = np.array([160, 50, 50])
     rango_rojo_alto2 = np.array([180, 255, 255])
+
 
     # Filtrar los píxeles azules
     mascara_azul = cv2.inRange(imagen_hsv, rango_azul_bajo, rango_azul_alto)
