@@ -82,26 +82,28 @@ def resize_regions(regions, image, target_size=(250, 250)):
     return resized_regions
 
 
-def apply_mser(image_path):
+def apply_mser(image_paths):
     # Cargar la imagen en color
-    original_image = cv2.imread(image_path)
+    regiones = []
+    for  image_path in image_paths[:3]:
+        original_image = cv2.imread(image_path)
 
     # Verificar si la imagen fue cargada correctamente
-    if original_image is None:
-        print(f"No se pudo cargar la imagen desde {image_path}")
-        return
+        if original_image is None:
+            print(f"No se pudo cargar la imagen desde {image_path}")
+            return
 
     # Convertir la imagen a escala de grises y filtrala
-    gray_image = enhance_contrast(original_image)
+        gray_image = enhance_contrast(original_image)
 
     # Crear el detector MSER con parámetros personalizados
-    mser = cv2.MSER_create(delta=5, min_area=200, max_area=2000)
+        mser = cv2.MSER_create(delta=5, min_area=200, max_area=2000)
 
     # Detectar regiones de alto contraste
-    regions, _ = mser.detectRegions(gray_image)
-    print(len(regions))
-    expanded_regions = expand_detected_regions(regions,gray_image)
-    print(len(expanded_regions))
+        regions, _ = mser.detectRegions(gray_image)
+        print(len(regions))
+        expanded_regions = expand_detected_regions(regions,gray_image)
+        print(len(expanded_regions))
     # Dibujar los contornos de las regiones detectadas sobre la imagen original
 
 
@@ -110,21 +112,21 @@ def apply_mser(image_path):
 
         #cv2.rectangle(original_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-    resized_regions = resize_regions(expanded_regions, original_image)
+        resized_regions = resize_regions(expanded_regions, original_image)
 
     # Mostrar la imagen con las regiones detectadas
-    cv2.imshow('MSER', original_image)
-    cv2.waitKey(0)
-    regiones=[]
-    for region in resized_regions:
-        regiones.append(detectar_colores(region))
+   #     cv2.imshow('MSER', original_image)
+    #    cv2.waitKey(0)
+
+        for region in resized_regions:
+            regiones.append(detectar_colores(region))
 
     encontrar_grupos_similares(regiones)
 
 
 def encontrar_grupos_similares(regiones):
 
-    grupos_similares=encontrar_regiones_similares(regiones, 30000)
+    grupos_similares=encontrar_regiones_similares(regiones, 20000)
     i=0
     for grupo in grupos_similares:
         print(i)
@@ -175,11 +177,11 @@ def detectar_colores(imagen):
     regiones=[]
     if cantidad_pixeles_rojos > umbral:
         print(cantidad_pixeles_rojos)
-        cv2.imshow("original", imagen)
-        cv2.imshow('Píxeles Rojos', pixeles_rojos)
+     #   cv2.imshow("original", imagen)
+     #   cv2.imshow('Píxeles Rojos', pixeles_rojos)
 
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+     #   cv2.waitKey(0)
+     #   cv2.destroyAllWindows()
         regiones.append(pixeles_rojos)
 
     pixeles_azules_gris = cv2.cvtColor(pixeles_azules, cv2.COLOR_BGR2GRAY)
@@ -189,11 +191,11 @@ def detectar_colores(imagen):
     umbral = 15000
     if cantidad_pixeles_azules > umbral:
         print(cantidad_pixeles_azules)
-        cv2.imshow("original", imagen)
-        cv2.imshow('Píxeles Azules', pixeles_azules)
+     #   cv2.imshow("original", imagen)
+     #   cv2.imshow('Píxeles Azules', pixeles_azules)
 
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+     #   cv2.waitKey(0)
+     #   cv2.destroyAllWindows()
         regiones.append(pixeles_azules)
 
     return regiones

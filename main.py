@@ -3,6 +3,8 @@ import os
 
 import cv2
 
+import Detector
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
@@ -29,9 +31,11 @@ if __name__ == "__main__":
         if filename.endswith(".ppm"):  # Filtrar solo archivos de imagen
             image_paths.append(os.path.join(train_path, filename))
     print(len(image_paths))
+
+    Detector.apply_mser(image_paths)
     # Create the detector
     print("Creando el detector " + args.detector)
-    
+
     # Cargar los datos de test y ejecutar el detector en esas imágenes
     print("Probando el detector " + args.detector + " en " + args.test_path)
 
