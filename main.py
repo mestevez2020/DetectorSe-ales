@@ -27,12 +27,16 @@ if __name__ == "__main__":
     image_paths = []
 
     # Obtener la lista de archivos en la carpeta train_path
+    gt_txt=''
     for filename in os.listdir(train_path):
         if filename.endswith(".ppm"):  # Filtrar solo archivos de imagen
             image_paths.append(os.path.join(train_path, filename))
+        else:
+            gt_txt=train_path+'/'+filename
+
     print(len(image_paths))
 
-    Detector.apply_mser(image_paths)
+    Detector.apply_mser(image_paths,gt_txt)
     # Create the detector
     print("Creando el detector " + args.detector)
 
