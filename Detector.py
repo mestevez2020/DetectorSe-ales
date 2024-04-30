@@ -17,6 +17,10 @@ senal4=[]
 senal5=[]
 senal6=[]
 
+
+
+
+
 def expand_detected_regions(regions, gray_image,original_image, datos, expand_factor=1.5):
     expanded_regions = []
     for region in regions:
@@ -122,6 +126,12 @@ def apply_mser(image_paths,gt_txt=''):
         for x, y, w, h in expanded_regions:
 
             cv2.rectangle(original_image, (x, y), (x + w, y + h), (0, 0, 255), 1)
+        #cv2.imshow("original", original_image)
+
+
+        #cv2.waitKey(0)
+        #cv2.destroyAllWindows()
+
     print("senal1")
     for region in senal1:
         mascara_roja(region)
