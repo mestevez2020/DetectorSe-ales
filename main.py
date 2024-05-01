@@ -20,6 +20,8 @@ if __name__ == "__main__":
 
     train_path = args.train_path
 
+    test_path = args.test_path
+
 
     # Cargar los datos de entrenamiento sin se necesita
     print("Cargando datos de entrenamiento desde " + args.train_path)
@@ -28,15 +30,17 @@ if __name__ == "__main__":
 
     # Obtener la lista de archivos en la carpeta train_path
     gt_txt=''
-    for filename in os.listdir(train_path):
+    for filename in os.listdir(test_path+"_alumnos"):
         if filename.endswith(".ppm"):  # Filtrar solo archivos de imagen
-            image_paths.append(os.path.join(train_path, filename))
+            image_paths.append(os.path.join(test_path+"_alumnos", filename))
         else:
             gt_txt=train_path+'/'+filename
 
-    print(len(image_paths))
+    Detector.obtener_senales(train_path)
+    Detector.apply_mser(image_paths)
 
-    Detector.apply_mser(image_paths,gt_txt)
+
+    #Detector.apply_mser(image_paths,gt_txt)
     # Create the detector
     print("Creando el detector " + args.detector)
 
