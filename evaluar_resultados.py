@@ -326,7 +326,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description='Plots the results of a homework')
     parser.add_argument(
-        '--test_path', default="", help='Select the testing data dir')
+        '--test_path', default="test_alumnos", help='Select the testing data dir')
     parser.add_argument(
         '--detections_file', default="resultado.txt", help='Select the detections results file')
     parser.add_argument(

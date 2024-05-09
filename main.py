@@ -37,7 +37,7 @@ if __name__ == "__main__":
             gt_txt=train_path+'/'+filename
 
     Detector.obtener_senales(train_path)
-    Detector.apply_mser(image_paths)
+    Detector.detected_regions(image_paths)
 
 
     #Detector.apply_mser(image_paths,gt_txt)
