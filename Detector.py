@@ -47,7 +47,7 @@ def obtener_senales_tipo1(train_path):
     senal1.append(mascara_roja(lector_imagen(train_path + "/04/00000.ppm")))
     senal1.append(mascara_roja(lector_imagen(train_path + "/05/00000.ppm")))
 
-    imagen_promedio = obtener_imagen_promedio(senal1, 2, 50)
+    imagen_promedio = obtener_imagen_promedio(senal1, 2, 45)
     calculo_mascaras(imagen_promedio)
 
 
@@ -59,7 +59,7 @@ def obtener_senales_tipo2(train_path):
     senal2.append(mascara_roja(lector_imagen(train_path + "/21/00000.ppm")))
     senal2.append(mascara_roja(lector_imagen(train_path + "/22/00000.ppm")))
 
-    imagen_promedio = obtener_imagen_promedio(senal2, 2, 60)
+    imagen_promedio = obtener_imagen_promedio(senal2, 2, 55)
     calculo_mascaras(imagen_promedio)
 
 
@@ -71,7 +71,7 @@ def obtener_senales_tipo3(train_path):
     senal3.append(mascara_roja(lector_imagen(train_path + "/14/00014.ppm")))
     senal3.append(mascara_roja(lector_imagen(train_path + "/14/00019.ppm")))
 
-    imagen_promedio = obtener_imagen_promedio(senal3, 2, 90)
+    imagen_promedio = obtener_imagen_promedio(senal3, 2, 70)
     calculo_mascaras(imagen_promedio)
 
 
@@ -83,7 +83,7 @@ def obtener_senales_tipo4(train_path):
     senal4.append(mascara_roja(lector_imagen(train_path + "/17/00014.ppm")))
     senal4.append(mascara_roja(lector_imagen(train_path + "/17/00019.ppm")))
 
-    imagen_promedio = obtener_imagen_promedio(senal4, 2, 60)
+    imagen_promedio = obtener_imagen_promedio(senal4, 2, 55)
     calculo_mascaras(imagen_promedio)
 
 
@@ -95,7 +95,7 @@ def obtener_senales_tipo5(train_path):
     senal5.append(mascara_roja(lector_imagen(train_path + "/13/00014.ppm")))
     senal5.append(mascara_roja(lector_imagen(train_path + "/13/00019.ppm")))
 
-    imagen_promedio = obtener_imagen_promedio(senal5, 2, 60)
+    imagen_promedio = obtener_imagen_promedio(senal5, 2, 55)
     calculo_mascaras(imagen_promedio)
 
 
@@ -107,7 +107,7 @@ def obtener_senales_tipo6(train_path):
     senal6.append(mascara_azul(lector_imagen(train_path + "/38/00014.ppm")))
     senal6.append(mascara_azul(lector_imagen(train_path + "/38/00019.ppm")))
 
-    imagen_promedio = obtener_imagen_promedio(senal6, 0, 100)
+    imagen_promedio = obtener_imagen_promedio(senal6, 0, 60)
     calculo_mascaras(imagen_promedio)
 
 
@@ -122,13 +122,13 @@ def obtener_imagen_promedio(lista_imagenes, color_valor, umbral):
     for imagen in lista_imagenes:
         suma_imagenes += imagen.astype(np.uint64)
 
-    imagen_promedio = (suma_imagenes / 5).astype(np.uint8)
+    imagen_promedio = (suma_imagenes / 6).astype(np.uint8)
 
     mask = imagen_promedio[:, :, color_valor] < umbral
     imagen_promedio[mask] = [0, 0, 0]
     return imagen_promedio
 
-
+#expandir regiones y filtrar repetidas
 def expand_detected_regions(regions, gray_image, original_image, expand_factor=1.2):
     expanded_regions = []
     for region in regions:
@@ -147,7 +147,7 @@ def expand_detected_regions(regions, gray_image, original_image, expand_factor=1
             img = resize_regions(imagen_recortada)
             score = -1
             number_senal = -1
-            for i in range(5):
+            for i in range(6):
                 number, porcentaje_total = comparacion_con_mascaras(img, i)
 
                 if number != 0:
@@ -284,10 +284,10 @@ def detected_regions(image_paths):
 
             print(image_path, x, y, w + x, h + y, number_senal, score, sep=';')
 
-       # cv2.imshow("original", original_image)
+        #cv2.imshow("original", original_image)
 
-       # cv2.waitKey(0)
-       # cv2.destroyAllWindows()
+        #cv2.waitKey(0)
+        #cv2.destroyAllWindows()
 
 
 def mascara_roja(imagen):
@@ -313,8 +313,8 @@ def mascara_roja(imagen):
 
 def mascara_azul(imagen):
     imagen_hsv = cv2.cvtColor(imagen, cv2.COLOR_BGR2HSV)
-    rango_azul_bajo = np.array([100, 50, 50])
-    rango_azul_alto = np.array([140, 255, 255])
+    rango_azul_bajo = np.array([90, 100, 100])
+    rango_azul_alto = np.array([130, 255, 255])
 
     mascara_azul = cv2.inRange(imagen_hsv, rango_azul_bajo, rango_azul_alto)
 
@@ -334,7 +334,7 @@ def mascara(imagen, r, b):
     rango_alto = np.array([255, 255, 255])
     return cv2.inRange(imagen_hsv, rango_bajo, rango_alto)
 
-
+#interseccion over union
 def comparar_rectangulos(x11, y11, x12, y12, x21, y21, x22, y22):
     # Coordenadas del rectángulo de intersección
     x1 = max(x11, x21)
@@ -347,13 +347,13 @@ def comparar_rectangulos(x11, y11, x12, y12, x21, y21, x22, y22):
     intersection_height = max(0, y2 - y1)
     intersection_area = intersection_width * intersection_height
 
-    rect1_area = (x12 - x11) * (y12 - y11)
-    intersection_percentage = (intersection_area / rect1_area) * 100
+    box1_area = (x12 - x11 + 1) * (y12 - y11 + 1)
+    box2_area = (x22 - x21 + 1) * (y22 - y21 + 1)
+    union_area = box1_area + box2_area - intersection_area
 
-    rect2_area = (x22 - x21) * (y22 - y21)
-    intersection_percentage2 = (intersection_area / rect2_area) * 100
+    iou = intersection_area / union_area
 
-    if intersection_percentage > 30 and intersection_percentage2 > 30:
+    if iou > 0.55:
 
         return True
     else:
