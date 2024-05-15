@@ -125,7 +125,6 @@ def obtener_imagen_promedio(lista_imagenes, color_valor, umbral):
         suma_imagenes += imagen.astype(np.uint64)
 
     imagen_promedio = (suma_imagenes / 6).astype(np.uint8)
-
     mask = imagen_promedio[:, :, color_valor] < umbral
     imagen_promedio[mask] = [0, 0, 0]
     return imagen_promedio
@@ -134,7 +133,6 @@ def obtener_imagen_promedio(lista_imagenes, color_valor, umbral):
 def expand_detected_regions(regions, gray_image, original_image, expand_factor=1.2):
     expanded_regions = []
     for region in regions:
-
         if len(region) == 4:
             x, y, w, h = region
         else:
@@ -171,7 +169,6 @@ def expand_detected_regions(regions, gray_image, original_image, expand_factor=1
                     expanded_regions.append((new_x, new_y, new_w, new_h, number_senal, score))
 
     return expanded_regions
-
 
 def comparacion_con_mascaras(img, number_mascara):
     if number_mascara != 5:
@@ -212,23 +209,18 @@ def enhance_contrast(original_image):
     return equ_image
 
 
-#Cambiar el tamaño de las imagenes que conseguimos recortando
 def resize_regions(image, target_size=(25, 25)):
     return cv2.resize(image, target_size)
 
-
 def mser_func( gray, mini, maxi):
     mser = cv2.MSER_create(delta=3, min_area=mini, max_area=maxi)
-
     regions, _ = mser.detectRegions(gray)
-
     return regions
 
 
 def transformada_Hough( gray):
     # Aplica un desenfoque gaussiano para reducir el ruido
     blurred = cv2.GaussianBlur(gray, (9, 9), 2)
-
     circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, dp=1, minDist=50,
                                param1=200, param2=30, minRadius=10, maxRadius=100)
     regions = []
@@ -279,12 +271,10 @@ def mascara_roja(imagen):
     mascara_roja2 = cv2.inRange(imagen_hsv, rango_rojo_bajo2, rango_rojo_alto2)
     mascara_roja = cv2.bitwise_or(mascara_roja1, mascara_roja2)
 
-    #esta parte podria sobrar
     pixeles_rojos = cv2.bitwise_and(imagen, imagen, mask=mascara_roja)
 
     #cv2.imshow("original", imagen)
     #cv2.imshow('Píxeles Rojos', pixeles_rojos)
-
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
     return pixeles_rojos
@@ -294,18 +284,15 @@ def mascara_azul(imagen):
     imagen_hsv = cv2.cvtColor(imagen, cv2.COLOR_BGR2HSV)
     rango_azul_bajo = np.array([90, 100, 100])
     rango_azul_alto = np.array([130, 255, 255])
-
     mascara_azul = cv2.inRange(imagen_hsv, rango_azul_bajo, rango_azul_alto)
-
     pixeles_azules = cv2.bitwise_and(imagen, imagen, mask=mascara_azul)
 
     #cv2.imshow("original", imagen)
     #cv2.imshow('Píxeles Azules', pixeles_azules)
-
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
-    return pixeles_azules
 
+    return pixeles_azules
 
 def mascara(imagen, r, b):
     imagen_hsv = cv2.cvtColor(imagen, cv2.COLOR_BGR2HSV)
@@ -320,7 +307,6 @@ def comparar_rectangulos(x11, y11, x12, y12, x21, y21, x22, y22):
     y1 = max(y11, y21)
     x2 = min(x12, x22)
     y2 = min(y12, y22)
-
     # Calcular la superficie de la intersección
     intersection_width = max(0, x2 - x1)
     intersection_height = max(0, y2 - y1)
@@ -331,7 +317,6 @@ def comparar_rectangulos(x11, y11, x12, y12, x21, y21, x22, y22):
     union_area = box1_area + box2_area - intersection_area
 
     iou = intersection_area / union_area
-
     return iou > 0.55
 
 
@@ -339,7 +324,6 @@ if __name__ == "__main__":
     import sys
 
     if len(sys.argv) > 1:
-
         detected_regions(sys.argv[1])
     else:
         print("Usage: python detector.py path_to_image")
