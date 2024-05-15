@@ -1,3 +1,5 @@
+import shutil
+
 import cv2
 
 import numpy as np
@@ -264,8 +266,8 @@ def detected_regions(image_paths):
                 archivo.write(f"{image_path[-9:]};{x};{y};{w + x};{h + y};{number_senal};{round(score/100,2)}\n")
 
             #print(image_path, x, y, w + x, h + y, number_senal, score, sep=';')
-
-
+        ruta_imagen = "./resultado_imgs/" + image_path[-9:]
+        cv2.imwrite( ruta_imagen, original_image)
 
 def mascara_roja(imagen):
     imagen_hsv = cv2.cvtColor(imagen, cv2.COLOR_BGR2HSV)
@@ -330,11 +332,7 @@ def comparar_rectangulos(x11, y11, x12, y12, x21, y21, x22, y22):
 
     iou = intersection_area / union_area
 
-    if iou > 0.55:
-
-        return True
-    else:
-        return False
+    return iou > 0.55
 
 
 if __name__ == "__main__":

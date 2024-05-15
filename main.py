@@ -1,5 +1,6 @@
 import argparse
 import os
+import shutil
 
 import cv2
 
@@ -36,6 +37,13 @@ if __name__ == "__main__":
         else:
             gt_txt=train_path+'/'+filename
 
+    if os.path.exists("resultado_imgs"):
+        # Elimina el directorio existente y su contenido de manera recursiva
+        shutil.rmtree("resultado_imgs")
+        print("Directorio existente eliminado en", "resultado_imgs")
+
+    # Crea el directorio)
+    os.makedirs("resultado_imgs")
     Detector.obtener_senales(train_path)
     Detector.detected_regions(image_paths)
 
