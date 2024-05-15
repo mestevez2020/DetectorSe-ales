@@ -1,5 +1,5 @@
 import cv2
-import matplotlib.pyplot as plt
+
 import numpy as np
 
 num_senal1 = ['0', '1', '2', '3', '4', '5', '7', '8', '9', '10', '15', '16']
@@ -205,26 +205,7 @@ def comparacion_con_mascaras(img, number_mascara):
 #Contraste y equalizacion de la imagen
 def enhance_contrast(original_image):
     gray_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
-
-    plt.imshow(gray_image, cmap='gray')
-    plt.title('Imagen en escala de grises')
-    plt.show()
-
-    hist_original = cv2.calcHist([gray_image], [0], None, [256], [0, 256])
-    plt.plot(hist_original)
-    plt.title('Histograma de la imagen en escala de grises')
-    plt.show()
-
     equ_image = cv2.equalizeHist(gray_image)
-
-  #  plt.imshow(equ_image, cmap='gray')
-  #  plt.title('Imagen con contraste mejorado')
-  #  plt.show()
-
-    hist_equ = cv2.calcHist([equ_image], [0], None, [256], [0, 256])
-  #  plt.plot(hist_equ)
-  #  plt.title('Histograma de la imagen con contraste mejorado')
-  #  plt.show()
 
     return equ_image
 
@@ -242,7 +223,7 @@ def mser_func( gray, mini, maxi):
     return regions
 
 
-def transformada_Hough(original_image, gray):
+def transformada_Hough( gray):
     # Aplica un desenfoque gaussiano para reducir el ruido
     blurred = cv2.GaussianBlur(gray, (9, 9), 2)
 
@@ -271,7 +252,7 @@ def detected_regions(image_paths):
             return
 
         gray_image = enhance_contrast(original_image)
-        regs = transformada_Hough(original_image, gray_image)
+        regs = transformada_Hough( gray_image)
         regs.extend(mser_func( gray_image, 200, 10000))
 
         expanded_regions = expand_detected_regions(regs, gray_image, original_image)
@@ -282,12 +263,8 @@ def detected_regions(image_paths):
             with open(nombre_archivo, 'a') as archivo:
                 archivo.write(f"{image_path[-9:]};{x};{y};{w + x};{h + y};{number_senal};{round(score/100,2)}\n")
 
-            print(image_path, x, y, w + x, h + y, number_senal, score, sep=';')
+            #print(image_path, x, y, w + x, h + y, number_senal, score, sep=';')
 
-        #cv2.imshow("original", original_image)
-
-        #cv2.waitKey(0)
-        #cv2.destroyAllWindows()
 
 
 def mascara_roja(imagen):
