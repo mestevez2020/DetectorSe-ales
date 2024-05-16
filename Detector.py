@@ -33,9 +33,9 @@ def obtener_senales(train_path):
 
 def calculo_mascaras(imagen_promedio):
     mascara_ = mascara(imagen_promedio, 1, 0)
-    cv2.imshow('Píxeles Rojos', mascara_)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    #cv2.imshow('Píxeles Rojos', mascara_)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
     mascaras.append(mascara_)
     mascara_inversa = 255 - mascara_
     mascaras_inversa.append(mascara_inversa)
